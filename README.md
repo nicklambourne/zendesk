@@ -12,7 +12,13 @@
 
 `python setup.py install`
 
-`python -m zendesk`
+`python -m zendesk run`
 
 ### Windows
-`python3 -m venv venv`
+`virtualenv venv`
+
+`venv\Scripts\activate`
+
+`python setup.py install`
+
+`python -m zendesk run`

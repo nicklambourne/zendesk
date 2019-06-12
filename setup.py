@@ -2,7 +2,8 @@ from setuptools import setup, find_packages
 
 requirements = [
     "pytest",
-    "zenpy"
+    "zenpy",
+    "pyfiglet"
 ]
 
 with open("README.md", "r") as fh:
@@ -25,6 +26,8 @@ setup(
         "License :: OSI Approved :: BSD License",
     ],
     entry_points={
-
+        "console_scripts": [
+            "run = zendesk.main"
+        ]
     },
 )

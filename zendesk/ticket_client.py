@@ -1,7 +1,7 @@
+from pyfiglet import Figlet
 from getpass import getpass
 from typing import List
 from zenpy import Zenpy, ZenpyException
-
 
 
 # Column sizes (assuming an 80 char width)
@@ -103,7 +103,9 @@ def main() -> None:
 
     :return:
     """
-    print("Welcome to the Zendesk ticket viewer!")
+    print(Figlet(font="slant").renderText("Zendesk"), end="")
+    print("Welcome to the Zendesk ticket viewer!\n"
+          "Enter your details below to log in.")
 
     email = input("Email: ")
     password = getpass()
