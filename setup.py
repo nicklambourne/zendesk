@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="elpis",
+    name="zendesk",
     version="0.0.1",
     packages=find_packages(),
     url="https://github.com/nicklambourne/elpis",

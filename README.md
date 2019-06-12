@@ -12,5 +12,7 @@
 
 `python setup.py install`
 
+`python -m zendesk`
+
 ### Windows
 `python3 -m venv venv`
