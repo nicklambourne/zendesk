@@ -27,7 +27,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "run = zendesk.main"
+            "run = zendesk.main",
         ]
     },
 )

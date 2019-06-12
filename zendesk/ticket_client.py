@@ -5,6 +5,7 @@ Interactive command line interface for accessing tickets on the Zendesk API.
 from pyfiglet import Figlet
 from getpass import getpass
 from typing import List
+from zenpy.lib.api_objects import Ticket
 from zenpy import Zenpy, ZenpyException
 
 
@@ -105,29 +106,50 @@ def tickets(client: Zenpy) -> None:
             print("Invalid option, try again.")
 
 
-def display_ticket(number: str) -> None:
+def sanitise_description(original: str) -> str:
+    """
+    Remove newlines from ticket descriptions.
+    :param original: the string to sanitise
+    :return: the same string, with newlines as spaces
+    """
+    return original.replace("\n", " ")
+
+
+def display_ticket(number: str, client) -> None:
     """
     Displays detailed view of a single ticket
     :param number: the ID number of the ticket to display
     """
-    pass
+    try:
+        ticket = client.tickets(id=number)
+    except ZenpyException:
+        print("Error accessing ticket with that ID. Are you sure it exists?")
+        return
+    print(f"{'*' * 80}\n"
+          f"{pad('Ticket ID: ', 15)}{pad(str(ticket.id), 65)}\n"
+          f"{pad('Subject: ', 15)}{pad(ticket.subject, 65)}\n"
+          f"{pad('Description: ', 15)}{pad(sanitise_description(ticket.description), 65)}\n"
+          f"{pad('Created: ', 15)}{pad(ticket.created_at, 65)}\n"
+          f"{pad('Submitted by: ', 15)}{pad(ticket.submitter.name, 65)}\n"
+          f"{pad('Status: ', 15)}{pad(ticket.status.capitalize(), 65)}\n"
+          f"{'*' * 80}\n")
 
 
 def main() -> None:
     """
-
+    Runs the interactive client
     :return:
     """
     print(Figlet(font="slant").renderText("Zendesk"), end="")
     print("Welcome to the Zendesk ticket viewer!\n"
-          "Enter your details below to log in.")
+          "Enter your details below to log in.\n")
 
     email = input("Email: ")
     password = getpass()
     subdomain = input("Subdomain: ")
 
     try:
-        print("Connecting to the Zendesk API...")
+        print("\nConnecting to the Zendesk API...\n")
         client = Zenpy(email=email,
                        password=password,
                        subdomain=subdomain)
@@ -136,21 +158,25 @@ def main() -> None:
         print("Error connecting to the Zendesk service. Please try again.\n"
               "- Are your credentials correct?\n"
               "- Is your internet connection working?")
-        exit(1)
+        return
 
     while True:
-        print("Choose one of the following options:\n"
-              "tickets: to list all tickets\n"
-              "<ticket_number>: to show details for the a single ticket")
+        print("\nChoose one of the following options to continue:\n"
+              " ➥ tickets: to list all tickets\n"
+              " ➥ <ticket_number>: to show details for the a single ticket\n"
+              " ➥ exit: to leave the program")
 
         option = input()
 
         if option == "tickets":
             tickets(client)
+        elif option == "exit":
+            print("See you next time!")
+            return
         else:
             try:
-                ticket_number = int(option)
-                display_ticket(ticket_number)
+                ticket_number = str(int(option))
+                display_ticket(ticket_number, client)
             except ValueError:
                 print("Invalid Option")
 
