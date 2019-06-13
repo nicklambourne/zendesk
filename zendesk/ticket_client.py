@@ -5,8 +5,8 @@ Interactive command line interface for accessing tickets on the Zendesk API.
 from pyfiglet import Figlet
 from getpass import getpass
 from typing import List
-from zenpy.lib.api_objects import Ticket
 from zenpy import Zenpy, ZenpyException
+from zenpy.lib.exception import RecordNotFoundException
 
 
 # Column sizes (assuming an 80 character width)
@@ -91,7 +91,7 @@ def tickets(client: Zenpy) -> None:
                        ticket.created.strftime("%m/%d/%y"),
                        ticket.created.strftime("%H:%M:%S")))
 
-        print(f"Showing tickets {first} to {last} of {len(results)}. "
+        print(f"Showing tickets {first + 1} to {last} of {len(results)}. "
               f"Type 'next', 'prev', or 'exit' to continue.")
 
         option = input()
@@ -179,6 +179,8 @@ def main() -> None:
                 display_ticket(ticket_number, client)
             except ValueError:
                 print("Invalid Option")
+            except RecordNotFoundException:
+                print("Record Not Found")
 
 
 if __name__ == "__main__":
