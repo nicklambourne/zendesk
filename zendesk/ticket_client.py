@@ -115,10 +115,11 @@ def sanitise_description(original: str) -> str:
     return original.replace("\n", " ")
 
 
-def display_ticket(number: str, client) -> None:
+def display_ticket(number: str, client: Zenpy) -> None:
     """
     Displays detailed view of a single ticket
     :param number: the ID number of the ticket to display
+    :param client: the Zenpy client connection object
     """
     try:
         ticket = client.tickets(id=number)
@@ -129,8 +130,9 @@ def display_ticket(number: str, client) -> None:
           f"{pad('Ticket ID: ', 15)}{pad(str(ticket.id), 65)}\n"
           f"{pad('Subject: ', 15)}{pad(ticket.subject, 65)}\n"
           f"{pad('Description: ', 15)}{pad(sanitise_description(ticket.description), 65)}\n"
-          f"{pad('Created: ', 15)}{pad(ticket.created_at, 65)}\n"
+          f"{pad('Created at: ', 15)}{pad(ticket.created_at, 65)}\n"
           f"{pad('Submitted by: ', 15)}{pad(ticket.submitter.name, 65)}\n"
+          f"{pad('Assigned to: ', 15)}{pad(ticket.assignee.name, 65)}\n"
           f"{pad('Status: ', 15)}{pad(ticket.status.capitalize(), 65)}\n"
           f"{'*' * 80}\n")
 
@@ -156,15 +158,15 @@ def main() -> None:
 
     except ZenpyException:
         print("Error connecting to the Zendesk service. Please try again.\n"
-              "- Are your credentials correct?\n"
-              "- Is your internet connection working?")
+              "  ➥ Are your credentials correct?\n"
+              "  ➥ Is your internet connection working?")
         return
 
     while True:
         print("\nChoose one of the following options to continue:\n"
-              " ➥ tickets: to list all tickets\n"
-              " ➥ <ticket_number>: to show details for the a single ticket\n"
-              " ➥ exit: to leave the program")
+              "  ➥ tickets: to list all tickets\n"
+              "  ➥ <ticket_number>: to show details for the a single ticket\n"
+              "  ➥ exit: to leave the program")
 
         option = input()
 
@@ -178,9 +180,9 @@ def main() -> None:
                 ticket_number = str(int(option))
                 display_ticket(ticket_number, client)
             except ValueError:
-                print("Invalid Option")
+                print("Invalid option, try again:")
             except RecordNotFoundException:
-                print("Record Not Found")
+                print("No ticket with that number found, try again:")
 
 
 if __name__ == "__main__":
